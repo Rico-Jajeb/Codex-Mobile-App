@@ -36,11 +36,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.headerText}>Hello, this is the Main Page</Text>
 
-      <Image
-        source={require('@/assets/images/partial-react-logo.png')}
-        style={styles.reactLogo}
-        resizeMode="contain"
-      />
+    
 
       <SafeAreaView>
         <Text style={styles.subText}>HAHAHAH</Text>
