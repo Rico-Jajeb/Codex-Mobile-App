@@ -22,6 +22,7 @@ type CodexItem = {
   language: string[];
   framework: string[];
   created_at: string;
+  category_name: string;
 };
 
 type APIResponse = {
@@ -90,6 +91,9 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = React.useState(false);
   const { width: screenWidth } = Dimensions.get('window');
+
+  const [selectedCodex, setSelectedCodex] = useState<CodexItem | null>(null);
+
 
   useEffect(() => {
     axios
@@ -178,10 +182,10 @@ export default function HomeScreen() {
                           <Text style={styles.subtitle}>
                               {new Date(item.created_at).toISOString().split('T')[0]}
                           </Text>   
-                           <Button style={styles.btn} size='tiny'
-                              appearance='ghost' onPress={() => setVisible(true)}>
-                                  0
-                            </Button>                  
+                           <Button style={styles.btn} size="tiny" appearance="ghost" onPress={() => { setSelectedCodex(item); setVisible(true);}}>
+                             0
+                            </Button>
+             
                       </View>
 
 
@@ -203,19 +207,32 @@ export default function HomeScreen() {
           ) : null}
         </View>
 
-            <Modal
-                visible={visible}
-                backdropStyle={styles.backdrop}
-                onBackdropPress={() => setVisible(false)}
-              >
-                <Card disabled={true}>
-                  <Text>
-                      Welcome to UI Kitten 😻
-                  </Text>
-                 
-                
-                </Card>
-              </Modal>
+    <Modal visible={visible}  >
+        <Card disabled={true} style={styles.bgwhite}>
+          <View style={styles.clsbtn}>
+              <Button onPress={() => { setVisible(false); setSelectedCodex(null);}} style={styles.btn} size="tiny" appearance="ghost">
+                x
+              </Button>            
+          </View>
+
+          <ScrollView>
+            {selectedCodex ? (
+              <View >
+                <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>{selectedCodex.codex_name}</Text>
+                <Text>{selectedCodex.content}</Text>
+                <Text style={styles.category}>Category: {selectedCodex.category_name}</Text>
+              </View>
+              
+            ) : (
+              <Text>No codex selected</Text>
+            )}            
+          </ScrollView>
+
+
+      
+        </Card>
+    </Modal>
+
       </ScrollView>
     </>
   );
@@ -321,8 +338,9 @@ const styles = StyleSheet.create({
   },
 
    backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'white',
   },
+  
   btn:{
     width: 50,
   }, 
@@ -332,5 +350,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',     
     marginTop: 10,
 
+  },
+  bgwhite:{
+    backgroundColor: 'white',
+    height: 500,
+  },
+  clsbtn:{
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  category:{
+    marginTop: 3,
+    color: 'gray',
   }
+
+
 });
