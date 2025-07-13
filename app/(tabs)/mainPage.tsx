@@ -34,7 +34,10 @@ export default function HomeScreen() {
   return (
     <>
     <View style={styles.container}>
-      <Text style={styles.headerText}>Hello, this is the Main Page</Text>
+    <Text className="text-white text-xl font-bold mb-2">
+    Hello, this is the Main Page
+  </Text>
+
 
     
 

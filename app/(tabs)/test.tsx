@@ -1,7 +1,6 @@
 import { Button, Card, Modal } from '@ui-kitten/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
 export default function HomeScreen() {
   
     const [visible, setVisible] = React.useState(false);
@@ -9,7 +8,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.headerText}>Hello, this is the Main Page</Text>
 
-     
+  
       <Button onPress={() => setVisible(true)}>
         TOGGLE MODAL
       </Button>
@@ -47,4 +46,5 @@ const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+ 
 });
