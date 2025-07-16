@@ -204,9 +204,16 @@ export default function HomeScreen() {
 
               </View>
 
-              {/* CODEX SECTION */}
+              {/* Tech Stack SECTION */}
               <View style={styles.techContainer}>
                 <Text style={styles.txtStack}>Technology Stack</Text>
+                
+              </View>
+
+              {/* Project SECTION */}
+              <View style={styles.projectContainer}>
+                <Text style={styles.Projctxt}>HIGHLIGHTS</Text>
+                <Text style={styles.Projctxt}>Exclusive Project</Text>
                 
               </View>
 
@@ -415,6 +422,30 @@ txtStack:{
 },
 
 //------------------------ Projects ----------------------------
+projectContainer: {
+  marginTop: 70,
+},
+Projctxt:{
+  fontSize: 16,
+  color: 'white',
+ 
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 });
