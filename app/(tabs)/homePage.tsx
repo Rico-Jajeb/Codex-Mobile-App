@@ -204,6 +204,12 @@ export default function HomeScreen() {
 
               </View>
 
+              {/* CODEX SECTION */}
+              <View style={styles.techContainer}>
+                <Text style={styles.txtStack}>Technology Stack</Text>
+                
+              </View>
+
               <Text style={styles.item}>{system.system_name}</Text>
 
               <Image source={{ uri: system.image_url }} style={{ width: 100, height: 100, borderRadius: 10, marginTop: 8 }} resizeMode="cover" />
@@ -395,7 +401,20 @@ const styles = StyleSheet.create({
   },
   code2: {
     marginTop: 20,
-  }
+  },
+
+//------------------------ Tech stack ----------------------------
+techContainer:{
+  marginTop: 70,
+},
+
+txtStack:{
+  fontSize: 16,
+  color: 'white',
+  textAlign: 'center',
+},
+
+//------------------------ Projects ----------------------------
 
 
 });
