@@ -23,6 +23,11 @@ type CodexItem = {
   framework: string[];
   created_at: string;
   category_name: string;
+  tags: string;
+  diffuclt_level: string;
+  code_snippet: string;
+  instructions: string;
+  output: string;
 };
 
 type APIResponse = {
@@ -219,8 +224,21 @@ export default function HomeScreen() {
             {selectedCodex ? (
               <View >
                 <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>{selectedCodex.codex_name}</Text>
-                <Text>{selectedCodex.content}</Text>
-                <Text style={styles.category}>Category: {selectedCodex.category_name}</Text>
+                
+                <Text style={styles.category}> <Text style={styles.txtD}>Category:</Text>  {selectedCodex.category_name}</Text>
+                <Text style={styles.category}> <Text style={styles.txtD}>Language:</Text>  {selectedCodex.language.join(', ')}</Text>
+                <Text style={styles.category}> <Text style={styles.txtD}>Framework:</Text>  {selectedCodex.framework.join(', ')}</Text>
+                <Text style={styles.category}> <Text style={styles.txtD}>Tags:</Text>  {selectedCodex.tags}</Text>
+                <Text style={styles.category}> <Text style={styles.txtD}>Level:</Text>  {selectedCodex.diffuclt_level}</Text>
+
+                <Text style={styles.content}> <Text style={styles.txtD}>Content:</Text>  {selectedCodex.content}</Text>
+                <Text style={styles.content}> <Text style={styles.txtD}>Instructions:</Text>  {selectedCodex.instructions}</Text>
+
+                <Text style={styles.code2}>Code:</Text>
+                <Text style={styles.code}>   {selectedCodex.code_snippet}</Text>
+
+                <Text style={styles.content}> <Text style={styles.txtD}>Output:</Text>  {selectedCodex.output}</Text>
+
               </View>
               
             ) : (
@@ -362,6 +380,21 @@ const styles = StyleSheet.create({
   category:{
     marginTop: 3,
     color: 'gray',
+  },
+  txtD: {
+    color: '#000000',
+  },
+  content: {
+    marginTop: 10,
+    color: '#4b5563',
+  },
+  code: {
+    marginTop: 10,
+    color: 'white',
+    backgroundColor: 'black',
+  },
+  code2: {
+    marginTop: 20,
   }
 
 
