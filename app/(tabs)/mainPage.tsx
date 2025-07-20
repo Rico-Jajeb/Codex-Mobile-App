@@ -10,7 +10,7 @@ type TechSkill = {
   image_url: string;
 };
 
-const API_URL = 'http://192.168.254.169:8000/api/tech-skills';
+const API_URL = 'http://192.168.254.169:8000/api/v1/tech-skills';
 
 export default function HomeScreen() {
   const [skills, setSkills] = useState<TechSkill[]>([]);
@@ -42,7 +42,7 @@ export default function HomeScreen() {
     
 
       <SafeAreaView>
-        <Text style={styles.subText}>HAHAHAH</Text>
+        <Text style={styles.subText}>HAHAHAH test</Text>
       </SafeAreaView>
 
       {loading ? (
