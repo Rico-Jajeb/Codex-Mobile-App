@@ -1,118 +1,131 @@
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Button,
+  Image,
+  StyleSheet,
+  TextInput,
+  View
+} from 'react-native';
 
-// 🔥 Define a TypeScript type for each skill
-type TechSkill = {
-  id: number;
-  tech_name: string;
-  img: string;
-  image_url: string;
-};
+const API_POST_URL = 'http://192.168.254.169:8000/api/v1/tech-skills';
 
-const API_URL = 'http://192.168.254.169:8000/api/v1/tech-skills';
-
-export default function HomeScreen() {
-  const [skills, setSkills] = useState<TechSkill[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export default function UploadSkillScreen() {
+  const [techName, setTechName] = useState('');
+  const [image, setImage] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios
-      .get<TechSkill[]>(API_URL)
-      .then((response) => {
-        setSkills(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log('Error fetching tech skills:', error);
-        setError('Failed to load skills');
-        setLoading(false);
-      });
+    (async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'Media library permission is needed.');
+      }
+    })();
   }, []);
 
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images, // <- use `MediaTypeOptions.Images` not `MediaType`
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const asset = result.assets[0];
+        setImage(asset);
+      }
+    } catch (error) {
+      console.log('Error picking image:', error);
+    }
+  };
+
+  const submitForm = async () => {
+    if (!techName || !image) {
+      Alert.alert('Please enter a tech name and pick an image.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('tech_name', techName);
+    formData.append('img', {
+      uri: image.uri,
+      type: 'image/jpeg',
+      name: 'photo.jpg',
+    } as any);
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(API_POST_URL, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      Alert.alert('Success', 'Tech skill uploaded!');
+      setTechName('');
+      setImage(null);
+    } catch (error: any) {
+      console.error('Upload error:', error.response?.data || error.message);
+      Alert.alert('Error', 'Upload failed!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <>
     <View style={styles.container}>
-    <Text className="text-white text-xl font-bold mb-2">
-    Hello, this is the Main Page
-  </Text>
+      <TextInput
+        placeholder="Enter tech name"
+        value={techName}
+        onChangeText={setTechName}
+        style={styles.input}
+        placeholderTextColor="#888"
+      />
 
+      <Button title="Pick Image" onPress={pickImage} />
 
-    
-
-      <SafeAreaView>
-        <Text style={styles.subText}>HAHAHAH test</Text>
-      </SafeAreaView>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#00ffcc" style={styles.loader} />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        <FlatList
-          data={skills}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View>
-
-           
-                <Text style={styles.item}>{item.tech_name} </Text>
-
-                <Image
-  source={{ uri: item.image_url }}
-  style={{ width: 100, height: 100, borderRadius: 10, marginTop: 8 }}
-  resizeMode="cover"
-/>
-
-
-            </View>     
-          )}
-          contentContainerStyle={styles.listContainer}
+      {image && (
+        <Image
+          source={{ uri: image.uri }}
+          style={styles.preview}
         />
       )}
+
+      <Button
+        title={loading ? 'Uploading...' : 'Submit'}
+        onPress={submitForm}
+        disabled={loading}
+      />
     </View>
-    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
+    backgroundColor: '#121313',
     flex: 1,
-    backgroundColor: '#121313ff',
-    paddingTop: 50,
-    paddingHorizontal: 20,
+    justifyContent: 'center',
   },
-  headerText: {
+  input: {
+    backgroundColor: '#1e1e1e',
     color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 8,
+    borderColor: '#444',
+    borderWidth: 1,
   },
-  subText: {
-    color: 'white',
-    marginBottom: 20,
-  },
-  reactLogo: {
-    width: '100%',
-    height: 200,
-    marginBottom: 20,
-  },
-  item: {
-    color: 'white',
-    fontSize: 18,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  loader: {
-    marginTop: 20,
-  },
-  errorText: {
-    color: 'red',
-    marginTop: 20,
-  },
-  listContainer: {
-    paddingBottom: 20,
+  preview: {
+    width: 150,
+    height: 150,
+    marginVertical: 10,
+    borderRadius: 10,
+    alignSelf: 'center',
   },
 });
