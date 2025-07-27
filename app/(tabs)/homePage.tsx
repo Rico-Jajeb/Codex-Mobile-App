@@ -4,6 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Dimensions, Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+
 type SystemInfo = {
   system_name: string;
   system_slogan: string;
@@ -35,7 +36,8 @@ type APIResponse = {
   codex: CodexItem[];
 };
 
-const API_URL = 'http://192.168.254.169:8000/api/system-info';
+ const API_URL = 'http://192.168.254.169:8000/api/system-info';
+// const API_URL = `${BASE_URL}/system-info`;
 
 const languageColorMap: { [key: string]: { backgroundColor: string; color: string } } = {
   PHP:         { backgroundColor: '#E9D5FF', color: '#7E22CE' },
@@ -115,6 +117,10 @@ export default function HomeScreen() {
       });
   }, []);
 
+
+
+
+  
   return (
     <>
       <ScrollView style={styles.container}>

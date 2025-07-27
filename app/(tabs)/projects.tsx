@@ -2,12 +2,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { BASE_URL } from '@/config/api';
 
 type ProjectInfo = {
   proj_name: string;
 };
-
-const API_URL = 'http://192.168.254.169:8000/api/v1/projects-api';
 
 export default function HomeScreen() {
   const [projects, setProjects] = useState<ProjectInfo[]>([]);
@@ -17,7 +16,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${BASE_URL}/projects-api`);
         console.log('API response:', response.data);
 
         if (Array.isArray(response.data)) {
