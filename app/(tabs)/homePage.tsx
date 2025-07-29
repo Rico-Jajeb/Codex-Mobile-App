@@ -109,6 +109,7 @@ export default function HomeScreen() {
         setSystem(response.data.system);
         setCodex(response.data.codex);
         setLoading(false);
+        console.log('API response:', response.data);
       })
       .catch((error) => {
         console.log('Error fetching system info:', error);
