@@ -137,9 +137,36 @@ export default function HomeScreen() {
         ) : projects.length > 0 ? (
             projects.map((item, index) => (
             <View key={index} style={styles.projectItem}>
-                    <Image source={{ uri: item.image_url }}  style={styles.img}  />
+                   
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.galleryContainer}>
+                      {/* First image: item.image_url */}
+                      <Image
+                        source={{ uri: item.image_url }}
+                        style={styles.galleryImage}
+                        resizeMode="cover"
+                      />
+
+                      {/* Remaining screenshots from image_url2 */}
+                      {projectsSC
+                        .filter(item2 =>
+                          item2.project_id === item.id &&
+                          typeof item2.image_url2 === 'string' &&
+                          item2.image_url2.trim() !== '' &&
+                          !item2.features
+                        )
+                        .map((item2, index) => (
+                          <Image
+                            key={index}
+                            source={{ uri: item2.image_url2 }}
+                            style={styles.galleryImage}
+                            resizeMode="cover"
+                          />
+                        ))}
+                    </ScrollView>
+
                     <Text style={styles.title2}>{item.proj_name}</Text>
                     <Text style={styles.projectText}>{item.proj_description}</Text>
+                    <Text style={styles.projectText2}>Features:</Text>
 
                 
               
@@ -209,12 +236,26 @@ export default function HomeScreen() {
                           );
                         })}
                       </View>
+
+
             </View>
+
+
+
             ))
         ) : (
             <Text style={styles.message}>No projects found.</Text>
         )}
-      
+
+
+
+
+
+
+
+
+
+
     </ScrollView>
   );
 }
@@ -304,4 +345,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#9CA3AF',
   },
+    projectText2: {
+    color: '#9CA3AF',
+    fontSize: 16,
+    marginTop: 10,
+  },
+  galleryContainer: {
+  marginTop: 10,
+  flexDirection: 'row',
+},
+galleryImage: {
+  width: 325,
+  height: 300,
+  borderRadius: 8,
+  marginRight: 10,
+},
+
 });
