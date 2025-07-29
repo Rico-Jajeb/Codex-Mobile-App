@@ -17,6 +17,15 @@ type ProjectInfo = {
   highlight: string;
   img: string;
   image_url: string;
+  id: string;
+};
+
+type screenshotsInfo = {
+
+  project_id: string,
+  features: string,
+  image_url2: string,
+
 };
 
 const languageColorMap: { [key: string]: { backgroundColor: string; color: string } } = {
@@ -74,30 +83,47 @@ const frameworkColorMap: { [key: string]: { backgroundColor: string; color: stri
 
 export default function HomeScreen() {
   const [projects, setProjects] = useState<ProjectInfo[]>([]);
+  const [projectsSC, setProjectsSc] = useState<screenshotsInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/projects-api`);
-     
 
-        if (Array.isArray(response.data)) {
-          setProjects(response.data);
-        } else {
-          throw new Error('Invalid data format from API');
-        }
-      } catch (err) {
-        console.error('Error fetching project info:', err);
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+
+    try {
+      const [projectRes, screenshotRes] = await Promise.all([
+        axios.get(`${BASE_URL}/projects-api`),
+        axios.get(`${BASE_URL}/screenshots-projects-api`)
+      ]);
+
+      const { data: projectData, status: projectStatus } = projectRes.data;
+      const { data: screenshotData, status: screenshotStatus } = screenshotRes.data;
+
+      if (projectStatus === 'success' && Array.isArray(projectData)) {
+        setProjects(projectData);
+      } else {
+        throw new Error('Invalid projects response');
       }
-    };
 
-    fetchProjects();
-  }, []);
+      if (screenshotStatus === 'success' && Array.isArray(screenshotData)) {
+        setProjectsSc(screenshotData);
+      } else {
+        throw new Error('Invalid screenshots response');
+      }
+
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError('Failed to load projects or screenshots.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.listContainer}>
@@ -114,7 +140,37 @@ export default function HomeScreen() {
                     <Image source={{ uri: item.image_url }}  style={styles.img}  />
                     <Text style={styles.title2}>{item.proj_name}</Text>
                     <Text style={styles.projectText}>{item.proj_description}</Text>
-                 
+
+                
+              
+            {/* Feature Section (per project) */}
+            {loading ? (
+              <ActivityIndicator size="large" color="#00ffcc" style={styles.loader} />
+            ) : error ? (
+              <Text style={styles.errorText}>{error}</Text>
+            ) : (() => {
+                const filteredFeatures = projectsSC.filter(
+                  item2 =>
+                    item2.project_id === item.id &&
+                    typeof item2.features === 'string' &&
+                    item2.features.trim().length > 0
+                );
+
+                return filteredFeatures.length > 0 ? (
+                  filteredFeatures.map((item2, index) => (
+                    <View key={index}>
+                      <Text style={styles.feature}>• {item2.features.trim()}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.message}>No Features found.</Text>
+                );
+              })()}
+
+
+
+                  
+
                     {/* Languages badges (first row) */}
                       <View style={[styles.language ,{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 }]}>
                         {item.language && item.language.map((lang, index) => {
@@ -158,6 +214,7 @@ export default function HomeScreen() {
         ) : (
             <Text style={styles.message}>No projects found.</Text>
         )}
+      
     </ScrollView>
   );
 }
@@ -242,5 +299,9 @@ const styles = StyleSheet.create({
   },
    framework: {
     gap: 6,
+  },
+  feature: {
+    fontSize: 16,
+    color: '#9CA3AF',
   },
 });
