@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View, } from 'react-native';
 
 import { BASE_URL } from '@/config/api';
 
@@ -163,6 +163,8 @@ export default function HomeScreen() {
                           />
                         ))}
                     </ScrollView>
+
+
 
                     <Text style={styles.title2}>{item.proj_name}</Text>
                     <Text style={styles.projectText}>{item.proj_description}</Text>
