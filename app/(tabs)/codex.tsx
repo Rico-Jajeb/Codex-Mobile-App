@@ -1,17 +1,15 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Searchbar } from 'react-native-paper';
 
 export default function HomeScreen() {
-
+  const [searchQuery, setSearchQuery] = React.useState('');
     
 return (
 
    <ScrollView style={styles.container}>
         <View>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Search Codex by title</Text>
-            </TouchableOpacity> 
+            <Searchbar placeholder="Search" onChangeText={setSearchQuery} value={searchQuery} />
         </View>
 
         <View style={styles.introCont}>
