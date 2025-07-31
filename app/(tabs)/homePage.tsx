@@ -1,11 +1,16 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as React from 'react';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { Drawer, Icon, MD3Colors, Searchbar } from 'react-native-paper';
+
+import { Button, Modal, PaperProvider, Portal, Text } from 'react-native-paper';
 
 export default function HomeScreen() {
-const [searchQuery, setSearchQuery] = React.useState('');
-    const [active, setActive] = React.useState('');
+     const [visible, setVisible] = React.useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const containerStyle = {backgroundColor: 'white', padding: 20, height: 300};
+
 return (
 
    <ScrollView style={styles.container}>
@@ -19,43 +24,26 @@ return (
             <Text style={styles.h1}>Welcome to SunRaku's Test Ground</Text>
         
         </View>
-           <Drawer.Section title="Some title">
-      <Drawer.Item
-        label="First Item"
-        active={active === 'first'}
-        onPress={() => setActive('first')}
-      />
-      <Drawer.Item
-        label="Second Item"
-        active={active === 'second'}
-        onPress={() => setActive('second')}
-      />
-    </Drawer.Section>
-        
-          <Drawer.CollapsedItem
-     focusedIcon="inbox"
-     unfocusedIcon="inbox-outline"
-     label="Inbox"
-   />
+     
 
-
-  <Icon
-    source="camera"
-    color={MD3Colors.error50}
-    size={20}
-  />
-
-     <Searchbar
-      placeholder="Search"
-      onChangeText={setSearchQuery}
-      value={searchQuery}
-    />
+      <PaperProvider>
+      <Portal>
+        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+          <Text>Example Modal.  Click outside this area to dismiss.</Text>
+        </Modal>
+      </Portal>
+      <Button style={{marginTop: 30}} onPress={showModal}>
+        Show
+      </Button>
+    </PaperProvider>
 
    </ScrollView>
 
 
 );
+
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -92,5 +80,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+   text: {
+    marginTop: 20, fontSize: 18,
+  },
  
 });
+
