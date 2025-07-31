@@ -1,12 +1,81 @@
-import * as React from 'react';
-import { Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import axios from 'axios';
+import { ActivityIndicator, Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 
-import ManualDrawer from './manualdrawer';
+
+import React, { useEffect, useState } from 'react';
+import ManualDrawer from '../Drawer/manualdrawer';
+
+import { BASE_URL } from '@/config/api';
+
+type CodexCategoryInfo = {
+    category_name: string;
+    description: string;
+};
+
+type CodexInfo = {
+  codex_name: string;
+  language: string;
+  framework: string;
+  tags: string;
+  diffuclt_level: string;
+  content: string;
+  code_snippet: string;
+  instructions: string;
+  output: string;
+  category_name: string;
+  image_url: string;
+};
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = React.useState('');
- const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+    const [projects, setProjects] = useState<CodexCategoryInfo[]>([]);
+    const [codexs, setCodex] = useState<CodexInfo[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+
+    try {
+      const [projectRes, codexRes] = await Promise.all([
+        axios.get(`${BASE_URL}/codex-category`),
+        axios.get(`${BASE_URL}/codex-api`),
+       
+      ]);
+
+      const { data: projectData, status: projectStatus } = projectRes.data;
+      const { data: codexData, status: codexStatus } = codexRes.data;
+     
+
+      if (projectStatus === 'success' && Array.isArray(projectData)) {
+        setProjects(projectData);
+      } else {
+        throw new Error('Invalid category response');
+      }
+
+      if (codexStatus === 'success' && Array.isArray(codexData)) {
+        setCodex(codexData);
+      } else {
+        throw new Error('Invalid category response');
+      }
+
+
+
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError('Failed to load projects or screenshots.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
 return (
 
    <ScrollView style={styles.container}>
@@ -26,10 +95,21 @@ return (
           <ManualDrawer visible={drawerOpen} onClose={() => setDrawerOpen(false)}>
             <Button title="Close" onPress={() => setDrawerOpen(false)} />
             <ScrollView style={styles.navBut}>
-              <Text style={styles.drawerText}>Laravel</Text>
-              <Text style={styles.drawerText}>React native</Text>
-              <Text style={styles.drawerText}>Infinityfree</Text>            
-                        
+
+            {loading ? (
+              <ActivityIndicator size="large" color="#00ffcc" style={styles.loader} />
+            ) : error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : projects.length > 0 ? (
+                projects.map((item, index) => (
+              <View key={index} style={styles.h2}>
+
+                  <Text style={styles.h2}>{item.category_name}</Text>
+
+              </View> 
+            ))) : (
+                <Text style={styles.h2}>No projects found.</Text>
+            )}               
             </ScrollView>
 
           </ManualDrawer>
@@ -43,7 +123,20 @@ return (
         </View>
 
  
-     
+        {loading ? (
+              <ActivityIndicator size="large" color="#00ffcc" style={styles.loader} />
+            ) : error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : codexs.length > 0 ? (
+                codexs.map((item, index) => (
+              <View key={index} style={styles.h2}>
+
+                  <Text style={styles.h2}>{item.codex_name}</Text>
+
+              </View> 
+            ))) : (
+                <Text style={styles.h2}>No projects found.</Text>
+            )}     
 
    </ScrollView>
 
@@ -109,5 +202,13 @@ const styles = StyleSheet.create({
   },
   navBut: {
     marginTop: 30,
+  },
+   errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  loader: {
+    marginTop: 20,
   },
 });
